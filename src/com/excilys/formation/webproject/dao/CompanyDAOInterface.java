@@ -1,6 +1,5 @@
 package com.excilys.formation.webproject.dao;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -13,11 +12,6 @@ import com.excilys.formation.webproject.om.Company;
  *
  */
 public interface CompanyDAOInterface{
-	/**
-	 * 
-	 * @return A Connection to the database Root
-	 */
-	public Connection getConnection();
 
 	/**
 	 * @return The Company in the table company matching the id

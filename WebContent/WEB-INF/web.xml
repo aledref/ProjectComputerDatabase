@@ -16,55 +16,5 @@
 		<res-type>javax.sql.DataSource</res-type>
 		<res-auth>Container</res-auth>
 	</resource-ref>
-  	
-  	<servlet>
-  		<servlet-name>DashboardServlet</servlet-name>
-  		<servlet-class>com.excilys.formation.webproject.servlet.DashboardServlet</servlet-class>
-  	</servlet>
- 	
-  	<servlet-mapping>
-  		<servlet-name>DashboardServlet</servlet-name>
-  		<url-pattern>/dashboard</url-pattern>
-  	</servlet-mapping>
-  	
-  	<servlet>
-  		<servlet-name>SearchServlet</servlet-name>
-  		<servlet-class>com.excilys.formation.webproject.servlet.SearchServlet</servlet-class>
-  	</servlet>
- 	
-  	<servlet-mapping>
-  		<servlet-name>SearchServlet</servlet-name>
-  		<url-pattern>/searchComputer</url-pattern>
-  	</servlet-mapping>
- 	
- 	<servlet>
-  		<servlet-name>AddServlet</servlet-name>
-  		<servlet-class>com.excilys.formation.webproject.servlet.AddServlet</servlet-class>
-  	</servlet>
- 	
-  	<servlet-mapping>
-  		<servlet-name>AddServlet</servlet-name>
-  		<url-pattern>/addComputer</url-pattern>
-  	</servlet-mapping>
-  	
-  	<servlet>
-  		<servlet-name>EditServlet</servlet-name>
-  		<servlet-class>com.excilys.formation.webproject.servlet.EditServlet</servlet-class>
-  	</servlet>
- 	
-  	<servlet-mapping>
-  		<servlet-name>EditServlet</servlet-name>
-  		<url-pattern>/editComputer</url-pattern>
-  	</servlet-mapping>
- 	
- 	<servlet>
-  		<servlet-name>RemoveServlet</servlet-name>
-  		<servlet-class>com.excilys.formation.webproject.servlet.RemoveServlet</servlet-class>
-  	</servlet>
- 	
-  	<servlet-mapping>
-  		<servlet-name>RemoveServlet</servlet-name>
-  		<url-pattern>/removeComputer</url-pattern>
-  	</servlet-mapping>
  	
 </web-app>

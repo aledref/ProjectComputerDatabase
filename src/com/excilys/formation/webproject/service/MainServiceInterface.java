@@ -25,6 +25,16 @@ public interface MainServiceInterface {
 	 * @return A List<Computer> of Computer in the table computer containing namefilter or whose company contains namefilter
 	 */
 	public List getListComputerWithName(String name);
+	/**
+	 * 
+	 * @return A List<Computer> of Computer in the table computer ordered by the field corresponding to Integer attributenumber and the String order by default "ASC"
+	 */
+	public List getListComputerOrdered(Integer attributenumber);
+	/**
+	 * 
+	 * @return A List<Computer> of Computer in the table computer ordered by the field corresponding to Integer attributenumber and the String order by default "ASC"
+	 */
+	public List getListComputerOrdered(Integer attributenumber,String order);
 	public void insertComputer(Computer comp);
 	/**
 	 * 

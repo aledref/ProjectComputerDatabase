@@ -4,47 +4,112 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * 
+ * 	id - The Long id of the computer in the database
+ *  name - The String name of the computer
+ *  introduced - The Timestamp introduced corresponding to the moment the computer entry has been put on the market
+ *  discontinued - The Timestamp discontinued corresponding to the moment the computer has been removed from the market
+ *  company - The Company manufacturing the computer
+ *  
+ *  attributenumber : associates an Integer to any field of Computer
+ *  	-Long id : 0;
+ *  	-String	name : 1;
+ *  	-Timestamp introduced : 2;
+ *  	-Timestamp discontinued : 3;
+ *  	-Company company : 4;
  * @author excilys
  *
  */
 public class Computer implements Serializable {
-
-	public Computer() {
-		super();
-	}	
-
-	/**
-	 * 
-	 * @param name - The String name of the computer
-	 * @param introduced - The Timestamp introduced corresponding to the moment the computer entry has been put on the market
-	 * @param discontinued - The Timestamp discontinued corresponding to the moment the computer has been removed from the market
-	 * @param company - The Company manufacturing the computer
-	 */
-	public Computer(String name,Timestamp introduced,Timestamp discontinued,Company company) {
-		super();
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = company;
-	}	
+	
+	public static class CpuBuilder {
+		private Long id;
+		private String	name;
+		private Timestamp introduced;
+		private Timestamp discontinued;
+		private Company company;
+		
+		/**
+		 * 
+		 * @param id
+		 * @return
+		 */
+		public CpuBuilder id(Long id) {
+			this.id = id;
+			return this;
+		}
+		/**
+		 * 
+		 * @param name
+		 * @return
+		 */
+		public CpuBuilder name(String name) {
+			this.name = name;
+			return this;
+		}		
+		/**
+		 * 
+		 * @param introduced
+		 * @return
+		 */
+		public CpuBuilder introduced(Timestamp introduced) {
+			this.introduced = introduced;
+			return this;
+		}
+		/**
+		 * 
+		 * @param discontinued
+		 * @return
+		 */
+		public CpuBuilder discontinued(Timestamp discontinued) {
+			this.discontinued = discontinued;
+			return this;
+		}
+		/**
+		 * 
+		 * @param company
+		 * @return
+		 */
+		public CpuBuilder company(Company company) {
+			this.company = company;
+			return this;
+		}
+		
+		/**
+		 * 
+		 * @return the name of the company
+		 */
+		public String getName() {
+			return name;
+		}
+		
+		/**
+		 * 
+		 * @return
+		 */
+	    public Computer build() {
+	        return new Computer(this);
+	    }
+	}
 	
 	/**
 	 * 
-	 * @param id - The Long id of the computer in the database
-	 * @param name - The String name of the computer
-	 * @param introduced - The Timestamp introduced corresponding to the moment the computer entry has been put on the market
-	 * @param discontinued - The Timestamp discontinued corresponding to the moment the computer has been removed from the market
-	 * @param company - The Company manufacturing the computer
+	 * @return
 	 */
-	public Computer(long id,String name,Timestamp introduced,Timestamp discontinued,Company company) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = company;
-	}	
+	public static CpuBuilder builder() {
+		return new CpuBuilder();
+	}
+	
+	/**
+	 * 
+	 * @param builder
+	 */
+	private Computer(CpuBuilder builder) {
+        this.id = builder.id;
+        this.name = builder.name; 
+        this.introduced = builder.introduced;
+        this.discontinued = builder.discontinued;
+        this.company = builder.company;
+    }	
 
 	//Attributs
 	private Long id;
@@ -105,7 +170,7 @@ public class Computer implements Serializable {
 	}
 	/**
 	 * 
-	 * @param discontinued Timestamp of discontinued
+	 * @param discontinued The Timestamp of discontinued
 	 */
 	public void setDiscontinued(Timestamp discontinued) {
 		this.discontinued = discontinued;

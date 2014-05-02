@@ -1,6 +1,7 @@
 package com.excilys.formation.webproject.om;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
  * 
@@ -8,21 +9,53 @@ import java.io.Serializable;
  *
  */
 public class Company implements Serializable{
-
-	public Company() {
-		super();
+	
+	public static class CpyBuilder {
+		private Long id;
+		private String	name;
+		
+		/**
+		 * 
+		 * @param id
+		 * @return
+		 */
+		public CpyBuilder id(Long id) {
+			this.id = id;
+			return this;
+		}
+		/**
+		 * 
+		 * @param name
+		 * @return
+		 */
+		public CpyBuilder name(String name) {
+			this.name = name;
+			return this;
+		}		
+		/**
+		 * 
+		 * @return
+		 */
+	    public Company build() {
+	        return new Company(this);
+	    }
 	}
-
+	
 	/**
 	 * 
-	 * @param  id The id of the company
-	 * @param  name A String containing the name of the company
+	 * @return
 	 */
-	public Company(long id,String name) {
-		super();
-		this.id = id;
-		this.name = name;
-	}	
+	public static CpyBuilder builder() {
+		return new CpyBuilder();
+	}
+	/**
+	 * 
+	 * @param builder
+	 */
+	private Company(CpyBuilder builder) {
+        this.id = builder.id;
+        this.name = builder.name;     
+    }
 
 	//Attributs
 	private Long id;

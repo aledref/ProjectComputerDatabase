@@ -14,8 +14,13 @@ import com.excilys.formation.webproject.om.Computer;
  *
  */
 public interface ComputerDAOInterface{
-
 	
+	/**
+	 * 
+	 * @param rs The ResulSet from the query on the database Root
+	 * @return A List of Computer
+	 */
+	public List extractFromResultSet(ResultSet rs) throws SQLException;
 	
 	/**
 	 * @return The Computer in the table computer matching the id
@@ -33,6 +38,18 @@ public interface ComputerDAOInterface{
 	 * @return A List<Computer> of Computer in the table computer containing namefilter
 	 */
 	public List getListComputerWithName(String namefilter);
+	
+	/**
+	 * 
+	 * @return A List<Computer> of Computer in the table computer ordered by the field corresponding to Integer attributenumber and the String order by default "ASC"
+	 */
+	public List getListComputerOrdered(Integer attributenumber);
+	
+	/**
+	 * 
+	 * @return A List<Computer> of Computer in the table computer ordered by the field corresponding to Integer attributenumber and the String order by default "ASC"
+	 */
+	public List getListComputerOrdered(Integer attributenumber,String order);
 	
 	/**
 	 * 

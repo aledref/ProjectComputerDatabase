@@ -9,23 +9,54 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.formation.webproject.dto.ComputerDTO;
+import com.excilys.formation.webproject.dto.ComputerDTO.DTOBuilder;
 import com.excilys.formation.webproject.om.Company;
 import com.excilys.formation.webproject.om.Computer;
-import com.excilys.formation.webproject.service.MainService;
+import com.excilys.formation.webproject.service.impl.MainServiceImpl;
 
+/**
+ * 
+ * @author excilys
+ *
+ */
 public class FormServlet extends HttpServlet {
 
-	public Computer retrieveComputer(HttpServletRequest request,HttpServletResponse response) {
-		String	name = new String(request.getParameter("name"));
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public ComputerDTO retrieveComputerDTO(HttpServletRequest request,HttpServletResponse response) {
+		
+		DTOBuilder cpurDTObuilder = ComputerDTO.builder();
+		cpurDTObuilder.name(request.getParameter("name"));
+		cpurDTObuilder.introduced(request.getParameter("introducedDate"));
+		cpurDTObuilder.discontinued(request.getParameter("discontinuedDate"));
+		Long companyid = Long.decode(request.getParameter("company"));
+		Company company = MainServiceImpl.Singleton.findCompanyById(companyid);	
+		cpurDTObuilder.company(company.getName());
+		
+		return cpurDTObuilder.build();
+	}
+	
+	/**
+	 * 
+	 * @param computerDTO
+	 * @return
+	 */
+	public Computer retrieveComputer(ComputerDTO computerDTO) {
+		String	name = computerDTO.getName();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		ParsePosition parseposition = new ParsePosition(0);
 		Date introduceddate = null;
 		Date discontinueddate = null;
 		Timestamp introduced = null;
 		Timestamp discontinued = null;
-		if (request.getParameter("introducedDate") != null) {
+		if (computerDTO.getIntroduced() != null) {
 			try {
-			introduceddate = formatter.parse(request.getParameter("introducedDate"),parseposition);
+			introduceddate = formatter.parse(computerDTO.getIntroduced(),parseposition);
 			introduced = new Timestamp(introduceddate.getTime());
 			} catch(NullPointerException e) {
 				introduced = new Timestamp(0);
@@ -34,9 +65,9 @@ public class FormServlet extends HttpServlet {
 			introduced = new Timestamp(0);
 		}
 		parseposition.setIndex(0);	
-		if (request.getParameter("discontinuedDate") != null) {
+		if (computerDTO.getDiscontinued() != null) {
 			try {
-			discontinueddate = formatter.parse(request.getParameter("discontinuedDate"),parseposition);
+			discontinueddate = formatter.parse(computerDTO.getDiscontinued(),parseposition);
 			discontinued = new Timestamp(discontinueddate.getTime());
 			} catch(NullPointerException e) {
 				discontinued = new Timestamp(0);
@@ -45,9 +76,8 @@ public class FormServlet extends HttpServlet {
 			discontinued = new Timestamp(0);	
 		}	
 		
-		Long companyid = Long.decode(request.getParameter("companyid"));
-		Company company = MainService.Singleton.findCompany(companyid);	
+		Company company = MainServiceImpl.Singleton.findCompanyByName(computerDTO.getCompany()); 
 		
-		return new Computer(name,introduced,discontinued,company);	
+		return new Computer.CpuBuilder().name(name).introduced(introduced).discontinued(discontinued).company(company).build();	
 	}
 }

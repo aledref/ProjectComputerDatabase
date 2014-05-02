@@ -8,6 +8,7 @@
 <!-- Bootstrap -->
 <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 <link href="css/main.css" rel="stylesheet" media="screen">
+
 </head>
 <body>
 	<header class="navbar navbar-fixed-top navbar-inverse">
