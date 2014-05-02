@@ -13,35 +13,35 @@ import com.excilys.formation.webproject.dto.PageWrapper;
  */
 public interface MainService {
 	/**
-	 * @return The Computer in the table computer matching the id
+	 * @return the Computer in the table computer matching the id
 	 */
 	public Computer findComputer(Long id);
 	/**
 	 * 
-	 * @return a List of every Computer in the database computer
-	 */
-	public List getListComputer();
-	/**
-	 * 
-	 * @return 
+	 * @return the size of the table computer
 	 */
 	public Integer getListComputerSize();
 	/**
 	 * 
-	 * @param pagewrapper
+	 * @param pagewrapper An object countaining the info for the next query
 	 */
 	public void getListComputer(PageWrapper pageWrapper); 
 	/**
 	 * 
 	 * @param pageWrapper
-	 * @return
+	 * @return the size of the List<Computer> of Computer in the table computer to be displayed
 	 */
 	public Integer getListComputerSizeWithName(PageWrapper pageWrapper);
 	/**
 	 * 
-	 * @return A List<Computer> of Computer in the table computer containing namefilter
+	 * @param pageWrapper
+	 * @return a List<Computer> of Computer in the table computer to be displayed
 	 */
 	public List getListComputerWithName(PageWrapper pageWrapper);
+	/**
+	 * 
+	 * @param comp A Computer to be put in the table computer to be displayed
+	 */
 	public void insertComputer(Computer comp);
 	/**
 	 * 
@@ -55,21 +55,21 @@ public interface MainService {
 	 */
 	public void removeComputer(Long id);
 	/**
-	 * @return The Company in the table company matching the id
+	 * @return the Company in the table company matching the id
 	 */
 	public Company findCompanyById(Long id);
 	/**
-	 * @return The Company in the table company matching the name
+	 * @return the Company in the table company matching the name
 	 */
 	public Company findCompanyByName(String name); 
 	/**
 	 * 
-	 * @return a List of every Company in the database company
+	 * @return a List<Company> of every Company in the table company
 	 */
 	public List getListCompany();
 	/**
 	 * 
-	 * @return A List<Company> of Company in the table computer containing namefilter
+	 * @param comp A Computer to be put in the table company
 	 */
 	public void insertCompany(Company comp);
 }

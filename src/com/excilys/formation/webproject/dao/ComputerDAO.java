@@ -41,9 +41,17 @@ public interface ComputerDAO{
 	
 	/**
 	 * 
-	 * @return A List<Computer> of Computer in the table computer containing namefilter
+	 * @param pageWrapper
+	 * @return
 	 */
-	public List getListWithName(String namefilter);
+	public Integer getListSizeWithName(PageWrapper pageWrapper);
+	
+	/**
+	 * 
+	 * @param pageWrapper
+	 * @return
+	 */
+	public List getListWithName(PageWrapper pageWrapper);
 	
 	/**
 	 * 

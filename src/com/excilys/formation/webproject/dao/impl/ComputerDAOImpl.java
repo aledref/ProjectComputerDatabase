@@ -38,7 +38,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 	public List extractFromResultSet(ResultSet rs) throws SQLException{
 		ArrayList<Computer> liste  = new ArrayList<>();
 		
-		for (;rs.next();) {
+		while ((rs != null)&&rs.next()) {
 			CpuBuilder b = Computer.builder().id(new Long(rs.getLong(1))).name(rs.getString(2));
 			try {
 				b.introduced(rs.getTimestamp(3));
@@ -156,8 +156,9 @@ public enum ComputerDAOImpl implements ComputerDAO{
 			stmt = cn.prepareStatement("SELECT DISTINCT cpu.id,cpu.name,cpu.introduced,cpu.discontinued,cpu.company_id,cpy.name FROM computer AS cpu "
 								  	  +"LEFT OUTER JOIN company AS cpy ON cpu.company_id = cpy.id ORDER BY "+pageWrapper.getFieldOrder()+" "+pageWrapper.getOrder()+", cpu.name ASC LIMIT ?,?;");
 			
-			stmt.setString(1,String.valueOf(25*(pageWrapper.getPageNumber())));
+			stmt.setString(1,String.valueOf(25*(pageWrapper.getPageNumber()-1)));
 			stmt.setString(2,String.valueOf(pageWrapper.getPerPage()));
+			
 			rs = stmt.executeQuery();
 			
 			liste = (ArrayList<Computer>) extractFromResultSet(rs);
@@ -189,8 +190,9 @@ public enum ComputerDAOImpl implements ComputerDAO{
 			stmt.setString(2,"%"+pageWrapper.getNameFilter()+"%");
 			rs = stmt.executeQuery();		
 
-			rs.next();
+			while(rs.next()){
 			computerListSize = rs.getInt("computerListSize"); 
+			}
 
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
@@ -217,41 +219,13 @@ public enum ComputerDAOImpl implements ComputerDAO{
 									  +"ORDER BY "+pageWrapper.getFieldOrder()+" "+pageWrapper.getOrder()+", cpu.name ASC LIMIT ?,?;");
 			stmt.setString(1,"%"+pageWrapper.getNameFilter()+"%");
 			stmt.setString(2,"%"+pageWrapper.getNameFilter()+"%");
-			stmt.setString(3,String.valueOf(25*(pageWrapper.getPageNumber())));
+			stmt.setString(3,String.valueOf(25*(pageWrapper.getPageNumber()-1)));
 			stmt.setString(4,String.valueOf(pageWrapper.getPerPage()));
-			rs = stmt.executeQuery();		
 
-			liste = (ArrayList<Computer>) extractFromResultSet(rs);
+			rs = stmt.executeQuery();		
+			
+			liste = (ArrayList<Computer>) extractFromResultSet(rs);		
 			pageWrapper.setComputerList(liste);
-
-		} catch (SQLException e) {
-			throw new IllegalStateException("SQL Exception on ResultSet");
-		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
-		}
-		return liste;	
-	}
-	/**
-	 * 
-	 * @return A List<Computer> of Computer in the table computer containing namefilter
-	 */
-	public List getListWithName(String namefilter) {	
-
-		ArrayList<Computer> liste  = new ArrayList<>();
-		ResultSet rs = null ;
-		PreparedStatement stmt = null;
-		Connection cn = null;
-
-		try {
-			cn = ConnectionFactoryImpl.Singleton.getConnection();
-			stmt = cn.prepareStatement("SELECT cpu.id,cpu.name,cpu.introduced,cpu.discontinued,cpu.company_id,cpy.name FROM computer AS cpu " 
-									  +"LEFT OUTER JOIN company AS cpy ON cpu.company_id = cpy.id WHERE cpu.name LIKE ? OR cpy.name LIKE ?;");
-			stmt.setString(1,"%"+namefilter+"%");
-			stmt.setString(2,"%"+namefilter+"%");
-			rs = stmt.executeQuery();		
-
-			liste = (ArrayList<Computer>) extractFromResultSet(rs);
-			System.out.println("fesfsef"+stmt.toString());
 
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
@@ -284,26 +258,12 @@ public enum ComputerDAOImpl implements ComputerDAO{
 			stmt.setString(4,String.valueOf(comp.getCompany().getId()));
 			} else stmt.setString(3,String.valueOf(comp.getDiscontinued()));
 			
-			//Transaction
-			cn.setAutoCommit(false);
-			try {
 			stmt.executeUpdate();
-			} catch (SQLException e) {
-				cn.rollback();
-			}				
-			cn.commit();
 
 		} catch (SQLException e) {
 			throw new IllegalStateException("Error on computer insertion query");
 		} finally {
-			try {
-				cn.setAutoCommit(true);
-			} catch (SQLException e) {
-				throw new IllegalStateException("Error while setting back auto-commit to true on insertion");
-			}
-			finally {
 			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
-			}
 		}		
 	}
 	/**

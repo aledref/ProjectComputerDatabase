@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import com.jolbox.bonecp.BoneCP;
+
 /**
  * 
  * @author excilys
@@ -13,15 +15,51 @@ public interface ConnectionFactory {
 
 	/**
 	 * 
-	 * @return A Connection to the database Root
 	 */
-	public Connection getConnection(); 
+	public void shutdownConnPool();
+ 
+	/**
+	 * 
+	 * @return
+	 */
+	public Connection getConnection();
 	
 	/**
 	 * 
-	 * @param rs The ResultSet of the database query
-	 * @param stmt The Statement for the database query
-	 * @param cn The Connection to the database
+	 * @param stmt
 	 */
-	public void disconnect(ResultSet rs,Statement stmt,Connection cn);
+	public void closeStatement(Statement stmt);
+	
+	/**
+	 * 
+	 * @param rs
+	 */
+	public void closeResultSet(ResultSet rs);
+ 
+	/**
+	 * 
+	 * @param conn
+	 */
+	public void closeConnection(Connection conn);
+	
+	/**
+	 * 
+	 * @param stmt
+	 * @param rs
+	 * @param conn
+	 */
+	public void disconnect(Statement stmt,ResultSet rs,Connection conn);
+ 
+	/**
+	 * 
+	 * @return
+	 */
+	public BoneCP getConnectionPool();
+ 
+	/**
+	 * 
+	 * @param connectionPool
+	 */
+	public void setConnectionPool(BoneCP connectionPool);
+ 
 }

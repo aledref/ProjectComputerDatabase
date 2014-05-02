@@ -14,6 +14,11 @@ import java.io.Serializable;
  */
 public class ComputerDTO implements Serializable {
 	
+	/**
+	 * 
+	 * @author excilys
+	 *
+	 */
 	public static class DTOBuilder {
 		private String	name;
 		private String introduced;

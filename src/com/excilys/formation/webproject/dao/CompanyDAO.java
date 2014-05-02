@@ -25,7 +25,7 @@ public interface CompanyDAO{
 	
 	/**
 	 * 
-	 * @param rs The ResulSet from the query on the database Root
+	 * @param rs The ResulSet from the query on the database computer-database-db
 	 * @return A List of Company
 	 */
 	public List extractFromResultSet(ResultSet rs) throws SQLException;

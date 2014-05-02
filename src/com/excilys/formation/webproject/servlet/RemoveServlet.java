@@ -20,18 +20,30 @@ public class RemoveServlet extends HttpServlet {
 
 	public void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {		
 		
-		Long removedid = Long.decode(request.getParameter("rid"));		
+		String ridS = request.getParameter("rid");
+		Long removedid;
+		
+		if ( (ridS.isEmpty()) || (ridS == null) ) this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request,response);
+		else {
+		removedid = Long.decode(request.getParameter("rid"));		
 		 
 		request.setAttribute("rcomputer", MainServiceImpl.Singleton.findComputer(removedid));
 		
 		this.getServletContext().getRequestDispatcher("/WEB-INF/removeComputer.jsp").forward(request,response);
+		}
 	}
 	
 	public void doPost(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {		
 		
-		Long removedid = Long.decode(request.getParameter("rid"));	
+		String ridS = request.getParameter("rid");
+		Long removedid;
+		
+		if ( (ridS.isEmpty()) || (ridS == null) ) this.getServletContext().getRequestDispatcher("/WEB-INF/dashboard.jsp").forward(request,response);
+		else {
+		removedid = Long.decode(request.getParameter("rid"));	
 		MainServiceImpl.Singleton.removeComputer(removedid);	
 		 
 		this.getServletContext().getRequestDispatcher("/dashboard").forward(request,response);
+		}
 	}	
 }

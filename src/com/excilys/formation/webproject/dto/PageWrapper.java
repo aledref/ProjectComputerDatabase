@@ -12,6 +12,11 @@ import com.excilys.formation.webproject.om.Computer;
  */
 public class PageWrapper implements Serializable {
 	
+	/**
+	 * 
+	 * @author excilys
+	 *
+	 */
 	public static class PwBuilder {
 		private String nameFilter;
 		private Integer pageNumber;

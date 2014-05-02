@@ -25,7 +25,6 @@ public class DashboardServlet extends HttpServlet {
 	public void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {		
 		
 		PageWrapper pageWrapper = null;
-		String nameFilterp = request.getParameter("nameFilterp");
 		String nameFilter = request.getParameter("nameFilter");
 		
 		//1-fieldOrder
@@ -49,7 +48,8 @@ public class DashboardServlet extends HttpServlet {
 			Integer pageNumber = null;
 			if (pageNumberS == null) pageNumber = 1;
 			else if (pageNumberS.equals("last")) {
-				pageNumber = (int) Math.ceil(computerListSize / 25.0)-1;		
+				pageNumber = (int) Math.ceil(computerListSize / 25.0);	
+				if (pageNumber == 0) pageNumber = 1;
 			}
 			else { 
 				pageNumber = (int) Double.parseDouble(pageNumberS);	
@@ -75,7 +75,8 @@ public class DashboardServlet extends HttpServlet {
 			Integer pageNumber = null;
 			if (pageNumberS == null) pageNumber = 1;
 			else if ((pageNumberS.equals("last"))) {
-				pageNumber = (int) Math.ceil(computerListSize / 25.0)-1;		
+				pageNumber = (int) Math.ceil(computerListSize / 25.0);	
+				if (pageNumber == 0) pageNumber = 1;
 			}
 			else { 
 				pageNumber = (int) Double.parseDouble(pageNumberS);	

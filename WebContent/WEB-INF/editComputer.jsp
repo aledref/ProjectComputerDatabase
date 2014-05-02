@@ -24,7 +24,7 @@
 			);								
 			
 			jQuery.validator.addMethod("dateComparison", function (value,element) {
-				if ( ($.trim(value).length > 0) && ($.trim($('#introducedDate').val()).length > 0) ) { return Date.parse($('#introducedDate').val()) < Date.parse(value); }
+				if ( ($.trim(value).length > 0) && ($.trim($('#introducedDate').val()).length > 0) ) { return Date.parse($('#introducedDate').val()) <= Date.parse(value); }
 				else {return true;}
 				},"Dates Impossibles"
 			);

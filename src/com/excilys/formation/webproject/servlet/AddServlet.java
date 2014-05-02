@@ -48,9 +48,7 @@ public class AddServlet extends FormServlet {
 			
 			this.getServletContext().getRequestDispatcher("/WEB-INF/addComputer.jsp").forward(request,response);
 		}
-		else {
-			System.out.println("Formulaire   valide !!!");
-	 
+		else { 
 			MainServiceImpl.Singleton.insertComputer(computer);
 			
 			this.getServletContext().getRequestDispatcher("/index.jsp").forward(request,response);

@@ -1,5 +1,60 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="../include/header.jsp" />
+
+<script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="js/jquery.validate.js"></script>
+
+<!--               JQuery               -->
+ <script type="text/javascript">
+ $(document).ready(function(){
+	 
+			jQuery.validator.addMethod("dateValid", function (value,element) { 
+				var valid = true;  
+				if ( (/^((19|20)\d\d)-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01]).*/i.test(value)) ) {
+					var date = value.split('-');
+					var year = parseInt(date[0]);
+					var month = parseInt(date[1]);
+					var day = parseInt(date[2]);
+					if (day > 31 ) {valid = false;} 
+					else if ( (day == 31) && ( (month == 2) || (month == 4) || (month == 6) || (month == 9) || (month == 11) ) ) {valid = false;} 
+					else if ( ( month == 2 ) && (day > 29) ) {valid = false;} 
+					else if ( ( month == 2 ) && (day == 29) && ( (year % 4) != 0) ) {valid = false;} 
+				} else {valid = false;}			
+				return ( this.optional(element) || valid);
+				},"Date Invalide"	        
+			);								
+			
+			jQuery.validator.addMethod("dateComparison", function (value,element) {
+				if ( ($.trim(value).length > 0) && ($.trim($('#introducedDate').val()).length > 0) ) { return Date.parse($('#introducedDate').val()) < Date.parse(value); }
+				else {return true;}
+				},"Dates Impossibles"
+			);
+			
+     // Initialisation du plugin
+	    $("#form").validate({
+	    	rules : {
+	        "name":{
+	            required: true,
+	            maxlength: 255
+	        },
+	    	"introducedDate":{
+	    		maxlength: 255,
+	    		dateValid: true
+        	},
+	    	"discontinuedDate":{
+	    		maxlength: 255,
+	    		dateValid: true,
+	    		dateComparison: true
+        	},
+	    	"company":{
+	    		maxlength: 255
+        	}
+        	}
+	    });
+ });
+ </script>
+<!--              /JQuery               -->
+
 <section id="main">
 
 	<h1>Add Computer</h1>
@@ -11,7 +66,7 @@
 				<div class="input">
 					<input type="text" name="name" />
 					<span class="help-inline">Required</span>
-					<input size="30" readonly type="text" value="${ errorlist.get(0) }"/>			
+					<input size="${errorlist.get(0).length()}" readonly type="text" value="${ errorlist.get(0) }"/>			
 				</div>
 			</div>
 	
@@ -20,7 +75,7 @@
 				<div class="input">
 					<input type="date" name="introducedDate" pattern="YY-MM-dd"/>
 					<span class="help-inline">YYYY-MM-DD</span>
-					<input size="30" readonly type="text" value="${ errorlist.get(1) }"/>				
+					<input size="${errorlist.get(1).length()}" readonly type="text" value="${ errorlist.get(1) }"/>				
 				</div>
 			</div>
 			<div class="clearfix">
@@ -28,7 +83,7 @@
 				<div class="input">
 					<input type="date" name="discontinuedDate" pattern="YY-MM-dd"/>
 					<span class="help-inline">YYYY-MM-DD</span>
-					<input size="30" readonly type="text" value="${ errorlist.get(2) }"/>			
+					<input size="${errorlist.get(2).length()}" readonly type="text" value="${ errorlist.get(2) }"/>			
 				</div>
 			</div>
 			<div class="clearfix">
@@ -40,7 +95,7 @@
 							<option value="${company.id}">${company.name}</option>
 						</c:forEach>
 					</select>
-					<input size="30" readonly type="text" value="${ errorlist.get(3) }"/> 
+					<input size="${errorlist.get(3).length()}" readonly type="text" value="${ errorlist.get(3) }"/> 
 				</div>
 			</div>
 		</fieldset>

@@ -11,9 +11,6 @@
 			<input type="submit" id="dashboard"
 				value="Filter by name"
 				class="btn btn-primary">
-			<c:if test="${pageWrapper.nameFilter.isEmpty()}">
-				<a class="btn btn-danger" id="rollback" href="dashboard" >Go back</a>
-			</c:if>
 		</form>
 		
 		<a class="btn btn-success" id="add" href="addComputer" >Add Computer</a>
