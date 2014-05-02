@@ -5,63 +5,115 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
 
-import com.excilys.formation.webproject.db.ConnectionFactory;
-
-/**
- * 
- * @author excilys
- *
- */
-public enum ConnectionFactoryImpl implements ConnectionFactory{
+public enum ConnectionFactoryImpl {
+	
 	Singleton;
-
-	/**
-	 * 
-	 * @return A Connection to the database Root
-	 */
-	public Connection getConnection() {
-		Connection cn = null;
-		Context ctx;
-		DataSource ds;
-		try {
-			ctx = new InitialContext();
-			ds = (DataSource) ctx.lookup("java:/comp/env/jdbc/Root");
-			cn = ds.getConnection();			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return cn;
+ 
+private BoneCP connectionPool = null;
+ 
+private void configureConnPool() {
+ 
+	try {
+		Class.forName("com.mysql.jdbc.Driver");
+	} catch (ClassNotFoundException e) {
+		throw new IllegalArgumentException("Could not find the driver for jdbc");
 	}
-
-	/**
-	 * 
-	 * @param rs The ResultSet of the database query
-	 * @param stmt The Statement for the database query
-	 * @param cn The Connection to the database
-	 */
-	public void disconnect(ResultSet rs,Statement stmt,Connection cn) throws IllegalStateException{
-		if (rs != null) {
-			try {
-				rs.close();
-			} catch(SQLException e) {
-				throw new IllegalStateException("ResultSet could not be released");
-			}
-		} if (stmt != null) {
-			try {
-				stmt.close();
-			} catch(SQLException e) {
-				throw new IllegalStateException("Statement could not be released");
-			}
-		} if (cn != null){
-			try { 	
-				cn.close();
-			} catch (SQLException e) {
-				throw new IllegalStateException("Connection could not be released");
-			}
-		}
+	BoneCPConfig config = new BoneCPConfig();
+	config.setJdbcUrl("jdbc:mysql://localhost:3306/computer-database-db");
+	config.setUsername("root");
+	config.setPassword("root");
+	config.setMinConnectionsPerPartition(5);   
+	config.setMaxConnectionsPerPartition(10);
+	config.setPartitionCount(2); //2*5 = 10 connection will be available
+	config.setLazyInit(true);
+	try {
+		connectionPool = new BoneCP(config); // setup the connection pool
+	} catch (SQLException e) {
+		throw new RuntimeException("Could not configure the connection pool");
 	}
+	System.out.println("contextInitialized.....Connection Pooling is configured");
+	System.out.println("Total connections ==> " + connectionPool.getTotalCreatedConnections());
+	setConnectionPool(connectionPool);
+}
+ 
+public void shutdownConnPool() {
+ 
+	try {
+		BoneCP connectionPool = getConnectionPool();
+		System.out.println("contextDestroyed....");
+		if (connectionPool != null) {
+			connectionPool.shutdown(); //this method must be called only once when the application stops.
+			//you don't need to call it every time when you get a connection from the Connection Pool
+			System.out.println("contextDestroyed.....Connection Pooling shut down!");
+		}
+ 
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+ 
+public Connection getConnection() {
+ 
+Connection conn = null;
+
+	//first connection ?
+	if (connectionPool ==null) configureConnPool();
+
+
+	try {
+	conn = getConnectionPool().getConnection();
+ 	//will get a thread-safe connection from the BoneCP connection pool.
+ 	//synchronization of the method will be done inside BoneCP source
+ 
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	return conn;
+}
+ 
+public void closeStatement(Statement stmt) {
+	try {
+		if (stmt != null)
+			stmt.close();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+ 
+public void closeResultSet(ResultSet rs) {
+	try {
+		if (rs != null)
+			rs.close();
+	} catch (Exception e) {
+		e.printStackTrace();
+	} 
+}
+ 
+public void closeConnection(Connection conn) {
+	try {
+		if (conn != null)
+			conn.close(); //release the connection - the name is tricky but connection is not closed it is released
+		//and it will stay in pool
+	} catch (SQLException e) {
+		e.printStackTrace();
+	} 
+}
+
+public void disconnect(Statement stmt,ResultSet rs,Connection conn) {
+	closeStatement(stmt);
+	closeResultSet(rs);
+	closeConnection(conn);
+}
+ 
+public BoneCP getConnectionPool() {
+	return connectionPool;
+}
+ 
+public void setConnectionPool(BoneCP connectionPool) {
+	this.connectionPool = connectionPool;
+}
+ 
 }

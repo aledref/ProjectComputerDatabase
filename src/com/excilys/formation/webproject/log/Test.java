@@ -8,4 +8,4 @@ public class Test {
     Logger logger = LoggerFactory.getLogger(Test.class);
     logger.info("Hello World");
   }
-}
+}	

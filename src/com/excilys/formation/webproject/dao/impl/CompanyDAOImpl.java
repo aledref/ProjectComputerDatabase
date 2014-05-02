@@ -57,7 +57,7 @@ public enum CompanyDAOImpl implements CompanyDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return company;
 	}
@@ -82,7 +82,7 @@ public enum CompanyDAOImpl implements CompanyDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return company;
 	}
@@ -107,7 +107,7 @@ public enum CompanyDAOImpl implements CompanyDAO{
 		} catch (SQLException e) {
 			 throw new IllegalStateException("Error while querying the database");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return liste;
 	}
@@ -131,7 +131,7 @@ public enum CompanyDAOImpl implements CompanyDAO{
 		} catch (SQLException e) {
 		 throw new IllegalStateException("Error while querying the database");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}		
 	}
 }

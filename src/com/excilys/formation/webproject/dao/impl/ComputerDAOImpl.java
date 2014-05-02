@@ -69,7 +69,8 @@ public enum ComputerDAOImpl implements ComputerDAO{
 			cn = ConnectionFactoryImpl.Singleton.getConnection();
 			stmt = cn.prepareStatement("SELECT DISTINCT cpu.id,cpu.name,cpu.introduced,cpu.discontinued,cpu.company_id,cpy.name FROM computer AS cpu "
 					  				  +"LEFT OUTER JOIN company AS cpy ON cpu.company_id = cpy.id WHERE cpu.id = ?;");
-			stmt.setString(1,String.valueOf(id));
+			stmt.setString(1,String.valueOf(id));	
+			
 			rs = stmt.executeQuery();
 			
 			liste = (ArrayList<Computer>) extractFromResultSet(rs);
@@ -80,7 +81,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return computer;
 	}
@@ -107,7 +108,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return computerListSize;
 	}
@@ -134,7 +135,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return liste;
 	}
@@ -165,7 +166,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 	}
 	/**
@@ -194,7 +195,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return computerListSize;	
 	}
@@ -226,7 +227,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return liste;	
 	}
@@ -255,7 +256,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
 		}
 		return liste;	
 	}
@@ -282,12 +283,27 @@ public enum ComputerDAOImpl implements ComputerDAO{
 			stmt.setString(3,String.valueOf(comp.getDiscontinued()));
 			stmt.setString(4,String.valueOf(comp.getCompany().getId()));
 			} else stmt.setString(3,String.valueOf(comp.getDiscontinued()));
+			
+			//Transaction
+			cn.setAutoCommit(false);
+			try {
 			stmt.executeUpdate();
+			} catch (SQLException e) {
+				cn.rollback();
+			}				
+			cn.commit();
 
 		} catch (SQLException e) {
-			throw new IllegalStateException("SQL Exception on ResultSet");
+			throw new IllegalStateException("Error on computer insertion query");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
+			try {
+				cn.setAutoCommit(true);
+			} catch (SQLException e) {
+				throw new IllegalStateException("Error while setting back auto-commit to true on insertion");
+			}
+			finally {
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			}
 		}		
 	}
 	/**
@@ -315,13 +331,28 @@ public enum ComputerDAOImpl implements ComputerDAO{
 				stmt.setString(4,String.valueOf(companyid));
 				stmt.setString(5,String.valueOf(id));
 			}else stmt.setString(4,String.valueOf(id));
+			
+			//Transaction
+			cn.setAutoCommit(false);
+			try {
 			stmt.executeUpdate();
+			} catch (SQLException e) {
+				cn.rollback();
+			}				
+			cn.commit();
 
 		} catch (SQLException e) {
-			throw new IllegalStateException("SQL Exception on ResultSet");
+			throw new IllegalStateException("Error on computer edition query");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
-		}		
+			try {
+				cn.setAutoCommit(true);
+			} catch (SQLException e) {
+				throw new IllegalStateException("Error while setting back auto-commit to true on edition");
+			}
+			finally {
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			}
+		}	
 	}
 	/**
 	 * 
@@ -339,12 +370,27 @@ public enum ComputerDAOImpl implements ComputerDAO{
 			stmt = cn.prepareStatement("DELETE FROM computer WHERE id = ?;");
 
 			stmt.setString(1,String.valueOf(id));
+			
+			//Transaction
+			cn.setAutoCommit(false);
+			try {
 			stmt.executeUpdate();
+			} catch (SQLException e) {
+				cn.rollback();
+			}				
+			cn.commit();
 
 		} catch (SQLException e) {
-			throw new IllegalStateException("SQL Exception on ResultSet");
+			throw new IllegalStateException("Error on computer removal query");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(rs,stmt,cn);
-		}		
+			try {
+				cn.setAutoCommit(true);
+			} catch (SQLException e) {
+				throw new IllegalStateException("Error while setting back auto-commit to true on removal");
+			}
+			finally {
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			}
+		}
 	}
 }
