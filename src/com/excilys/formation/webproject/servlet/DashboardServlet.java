@@ -22,7 +22,7 @@ import com.excilys.formation.webproject.service.impl.MainServiceImpl;
 public class DashboardServlet extends HttpServlet {
 
 	public void doGet(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {		
-		
+		//
 		PageWrapper pageWrapper = null;
 		String nameFilter = request.getParameter("nameFilter");
 		
