@@ -13,7 +13,7 @@ import com.excilys.formation.webproject.db.impl.ConnectionFactoryImpl;
 import com.excilys.formation.webproject.om.Company;
 import com.excilys.formation.webproject.om.Computer;
 import com.excilys.formation.webproject.om.Computer.CpuBuilder;
-import com.excilys.formation.webproject.dto.PageWrapper;
+import com.excilys.formation.webproject.common.PageWrapper;
 
 /**
  * attributenumber : associates an Integer to any field of Computer

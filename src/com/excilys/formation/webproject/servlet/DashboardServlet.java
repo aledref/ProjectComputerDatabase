@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.excilys.formation.webproject.om.Computer;
-import com.excilys.formation.webproject.dto.PageWrapper;
+import com.excilys.formation.webproject.common.PageWrapper;
 import com.excilys.formation.webproject.service.impl.MainServiceImpl;
 
 /**

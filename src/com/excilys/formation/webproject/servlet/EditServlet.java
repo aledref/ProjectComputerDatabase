@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.formation.webproject.common.Validator;
 import com.excilys.formation.webproject.dto.ComputerDTO;
 import com.excilys.formation.webproject.om.Company;
 import com.excilys.formation.webproject.om.Computer;

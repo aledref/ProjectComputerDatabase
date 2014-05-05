@@ -4,6 +4,7 @@
 <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="js/jquery.validate.js"></script>
 
+<!--               JQuery               -->
  <script type="text/javascript">
  $(document).ready(function(){
 	 
@@ -52,6 +53,7 @@
 	    });
  });
  </script>
+ <!--              /JQuery               -->
 
 <section id="main">
 

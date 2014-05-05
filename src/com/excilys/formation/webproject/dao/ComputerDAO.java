@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.excilys.formation.webproject.om.Computer;
-import com.excilys.formation.webproject.dto.PageWrapper;
+import com.excilys.formation.webproject.common.PageWrapper;
 
 /**
  * 
