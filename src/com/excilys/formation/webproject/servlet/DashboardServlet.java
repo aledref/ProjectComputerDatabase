@@ -2,7 +2,6 @@ package com.excilys.formation.webproject.servlet;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.excilys.formation.webproject.om.Computer;
 import com.excilys.formation.webproject.common.PageWrapper;
+import com.excilys.formation.webproject.om.Computer;
 import com.excilys.formation.webproject.service.impl.MainServiceImpl;
 
 /**
@@ -45,16 +44,16 @@ public class DashboardServlet extends HttpServlet {
 			
 			//4-pageNumber
 			String pageNumberS = request.getParameter("pageNumber");
+			
 			Integer pageNumber = null;
 			if (pageNumberS == null) pageNumber = 1;
 			else if (pageNumberS.equals("last")) {
 				pageNumber = (int) Math.ceil(computerListSize / 25.0);	
 				if (pageNumber == 0) pageNumber = 1;
-			}
-			else { 
-				pageNumber = (int) Double.parseDouble(pageNumberS);	
-			}
-		
+			}else if (!pageNumberS.matches("^[0-9]*$")) {
+					pageNumber = 1;
+			}else pageNumber = (int) Double.parseDouble(pageNumberS);					
+			
 			//Build with all except computerList,namefilter
 			pageWrapper = PageWrapper.builder().pageNumber(pageNumber).fieldOrder(fieldOrder).order(order).computerListSize(computerListSize).build();
 		
@@ -77,10 +76,9 @@ public class DashboardServlet extends HttpServlet {
 			else if ((pageNumberS.equals("last"))) {
 				pageNumber = (int) Math.ceil(computerListSize / 25.0);	
 				if (pageNumber == 0) pageNumber = 1;
-			}
-			else { 
-				pageNumber = (int) Double.parseDouble(pageNumberS);	
-			}
+			}else if (!pageNumberS.matches("^[0-9]*$")) {
+				pageNumber = 1;
+			}else pageNumber = (int) Double.parseDouble(pageNumberS);
 			
 			//Build with 5-nameFilter, countains all except except computerList
 			pageWrapper = PageWrapper.builder().nameFilter(nameFilter).pageNumber(pageNumber).fieldOrder(fieldOrder).order(order).computerListSize(computerListSize).build();

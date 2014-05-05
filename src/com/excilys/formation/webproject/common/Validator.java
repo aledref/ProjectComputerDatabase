@@ -14,19 +14,6 @@ public class Validator {
 	
 	/**
 	 * 
-	 * @param errorlist
-	 * @return
-	 */
-	public static boolean validate(List errorlist) {
-		
-		for (int i = 0;i < 4;i++) {		
-			if (!(((String) errorlist.get(i)).substring(0,2).equals("OK"))) return false;
-		}
-		return true;
-	}
-	
-	/**
-	 * 
 	 * @param computerDTO
 	 * @return
 	 */
@@ -48,6 +35,19 @@ public class Validator {
 		errorlist.add(3,new String (sb));
 		
 		return errorlist;
+	}
+
+	/**
+	 * 
+	 * @param errorlist
+	 * @return
+	 */
+	public static boolean validate(List errorlist) {
+		
+		for (int i = 0;i < 4;i++) {		
+			if (!(((String) errorlist.get(i)).substring(0,2).equals("OK"))) return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class Validator {
 		if (introduced.equals("")) return "OK";
 		else if (introduced.length() < 10) status = "The introduced entry is too long";
 		else introduced = introduced.substring(0,10);
-		System.out.println(introduced);
+
 		if (introduced == null) throw new IllegalStateException("The introduced entry is null");
 		//Pattern YYYY-MM-DD
 		String pattern = ("^((19|20)\\d\\d)-(0[1-9]|1[012])-(0[0-9]|[12]\\d|3[01]).*");
@@ -104,7 +104,7 @@ public class Validator {
 		if (introduced == null) throw new IllegalStateException("The discontinued entry is null");
 		//Pattern YYYY-MM-DD
 		String pattern = ("^((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12]\\d|3[01]).*");
-		System.out.println("pattern discontinued "+discontinued+" test "+discontinued.matches(pattern));
+
 		if (discontinued.length() > 255) status = "The discontinued entry is too long";
 		else if (!discontinued.matches(pattern) ) status="The discontinued entry is invalid";  
 		else if (!preciseCheck(discontinued) ) status="The discontinued entry is invalid"; 
@@ -132,8 +132,6 @@ public class Validator {
 	    int year = Integer.parseInt(date.substring(0,4));
 		int month = Integer.parseInt(date.substring(5,7));
 		int day = Integer.parseInt(date.substring(8,10));
-		
-		System.out.println(day+" "+month+" "+year);
 	 
 		if (day > 31) return false; 
 		else if ( (day == 31) && ( (month == 2) || (month == 4) || (month == 6) || (month == 9) || (month == 11) ) ) return false; 

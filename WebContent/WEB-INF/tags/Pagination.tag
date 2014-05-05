@@ -1,6 +1,6 @@
 <%@ tag body-content="empty" %> 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ attribute type="com.excilys.formation.webproject.dto.PageWrapper" name="pageWrapper" %>
+<%@ attribute type="com.excilys.formation.webproject.common.PageWrapper" name="pageWrapper" %>
 
 
 	<table class ="table table-bordered">

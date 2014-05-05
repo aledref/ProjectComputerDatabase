@@ -5,8 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.excilys.formation.webproject.om.Computer;
 import com.excilys.formation.webproject.common.PageWrapper;
+import com.excilys.formation.webproject.om.Computer;
 
 /**
  * 

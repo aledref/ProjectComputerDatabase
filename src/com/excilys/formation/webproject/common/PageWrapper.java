@@ -11,7 +11,7 @@ import com.excilys.formation.webproject.om.Computer;
  *
  */
 public class PageWrapper implements Serializable {
-	
+
 	/**
 	 * 
 	 * @author excilys

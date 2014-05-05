@@ -1,7 +1,6 @@
 package com.excilys.formation.webproject.om;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * 
