@@ -1,5 +1,6 @@
 package com.excilys.formation.webproject.dao;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,51 +25,57 @@ public interface ComputerDAO{
 	/**
 	 * @return The Computer in the table computer matching the id
 	 */
-	public Computer find(Long id);
+	public Computer find(Connection cn,Long id);
 	
 	/**
 	 * 
 	 * @return A List<Computer> of Computer in the table computer
 	 */
-	public List getList();
+	public List getList(Connection cn);
 
 	/**
 	 * 
 	 * @param pagewrapper
 	 * @return
 	 */
-	public void getList(PageWrapper pagewrapper);
+	public void getList(Connection cn,PageWrapper pagewrapper);
 	
 	/**
 	 * 
 	 * @param pageWrapper
 	 * @return
 	 */
-	public Integer getListSizeWithName(PageWrapper pageWrapper);
+	public Integer getListSizeWithName(Connection cn,PageWrapper pageWrapper);
 	
 	/**
 	 * 
 	 * @param pageWrapper
 	 * @return
 	 */
-	public List getListWithName(PageWrapper pageWrapper);
+	public List getListWithName(Connection cn,PageWrapper pageWrapper);
 	
 	/**
 	 * 
-	 * @param comp A Computer to be added in the table computer
+	 * @param cn
+	 * @param comp
+	 * @throws SQLException
 	 */
-	public void insert(Computer comp);
+	public void insert(Connection cn,Computer comp)throws SQLException;
 	
 	/**
 	 * 
-	 * @param comp A Computer to be edited in the table computer
-	 * @param id The id of the edited Computer
+	 * @param cn
+	 * @param comp
+	 * @param id
+	 * @throws SQLException
 	 */
-	public void edit(Computer comp,Long id);
+	public void edit(Connection cn,Computer comp,Long id)throws SQLException;
 	
 	/**
 	 * 
-	 * @param id The id of the Computer to be removed in the table computer
+	 * @param cn
+	 * @param id
+	 * @throws SQLException
 	 */
-	public void remove(Long id);
+	public void remove(Connection cn,Long id)throws SQLException;
 }

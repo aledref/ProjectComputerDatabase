@@ -39,11 +39,10 @@ public enum CompanyDAOImpl implements CompanyDAO{
 	/**
 	 * @return The Company in the table company matching the id
 	 */
-	public Company findById(Long id) {
+	public Company findById(Connection cn,Long id) {
 		if (id==0) return Company.builder().name("").build();	
 		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
 		Company company = null;
 
 		try {
@@ -57,18 +56,17 @@ public enum CompanyDAOImpl implements CompanyDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return company;
 	}
 	/**
 	 * @return The Company in the table company matching the name
 	 */
-	public Company findByName(String name) {
+	public Company findByName(Connection cn,String name) {
 		if (name == "") return Company.builder().build();
 		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
 		Company company = null;
 
 		try {
@@ -82,7 +80,7 @@ public enum CompanyDAOImpl implements CompanyDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return company;
 	}
@@ -90,11 +88,10 @@ public enum CompanyDAOImpl implements CompanyDAO{
 	 * 
 	 * @return A List<Company> of Company in the table company
 	 */
-	public List getList() {
+	public List getList(Connection cn) {
 		ArrayList<Company> liste  = new ArrayList<>();
 		ResultSet rs = null ;
 		Statement stmt = null;
-		Connection cn = null;
 
 		try {
 
@@ -107,7 +104,7 @@ public enum CompanyDAOImpl implements CompanyDAO{
 		} catch (SQLException e) {
 			 throw new IllegalStateException("Error while querying the database");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return liste;
 	}
@@ -115,23 +112,17 @@ public enum CompanyDAOImpl implements CompanyDAO{
 	 * 
 	 * @param comp A Company to be added in the table company
 	 */
-	public void insert(Company comp) {
-		ResultSet rs = null ;
+	public void insert(Connection cn,Company comp) throws SQLException{
+
 		PreparedStatement stmt = null;
-		Connection cn = null;
+		
+		cn = ConnectionFactoryImpl.Singleton.getConnection();
+		stmt = cn.prepareStatement("INSERT into company(id,name) VALUES(?,?);");
 
-		try {		
-			cn = ConnectionFactoryImpl.Singleton.getConnection();
-			stmt = cn.prepareStatement("INSERT into company(id,name) VALUES(?,?);");
-
-			stmt.setString(1,String.valueOf(comp.getId()));
-			stmt.setString(2,comp.getName());
-			stmt.executeUpdate();
+		stmt.setString(1,String.valueOf(comp.getId()));
+		stmt.setString(2,comp.getName());
+		stmt.executeUpdate();
 			
-		} catch (SQLException e) {
-		 throw new IllegalStateException("Error while querying the database");
-		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
-		}		
+		ConnectionFactoryImpl.Singleton.closeStatement(stmt);	
 	}
 }

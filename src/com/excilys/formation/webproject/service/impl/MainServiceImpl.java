@@ -1,13 +1,18 @@
 package com.excilys.formation.webproject.service.impl;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.excilys.formation.webproject.dao.impl.CompanyDAOImpl;
 import com.excilys.formation.webproject.dao.impl.ComputerDAOImpl;
+import com.excilys.formation.webproject.db.impl.ConnectionFactoryImpl;
 import com.excilys.formation.webproject.om.Company;
 import com.excilys.formation.webproject.om.Computer;
 import com.excilys.formation.webproject.service.MainService;
 import com.excilys.formation.webproject.dto.PageWrapper;
+
 
 /**
  * 
@@ -18,12 +23,25 @@ public enum MainServiceImpl implements MainService{
 	
 	Singleton;
 
+	private void abortTransaction(Connection cn,String S) {
+		try {
+			cn.setAutoCommit(true);
+		} catch (SQLException e) {
+			throw new IllegalStateException("Error while setting back auto-commit to true"+S);
+		}
+		finally {
+			ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		}	
+	}	
 	/**
 	 * @return the Computer in the table computer matching the id
 	 */
 	@Override
 	public Computer findComputer(Long id) {
-		return ComputerDAOImpl.Singleton.find(id);
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		Computer comp  = ComputerDAOImpl.Singleton.find(cn,id);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		return comp;
 	}
 	
 	/**
@@ -32,7 +50,10 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public Integer getListComputerSize() {
-		return ComputerDAOImpl.Singleton.getListSize();	
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		Integer size  = ComputerDAOImpl.Singleton.getListSize(cn);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		return size; 	
 	}
 	
 	/**
@@ -41,7 +62,9 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public void getListComputer(PageWrapper pageWrapper) {
-		ComputerDAOImpl.Singleton.getList(pageWrapper);
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		ComputerDAOImpl.Singleton.getList(cn,pageWrapper);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);	
 	}
 	
 	/**
@@ -51,7 +74,10 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public Integer getListComputerSizeWithName(PageWrapper pageWrapper) {
-		return ComputerDAOImpl.Singleton.getListSizeWithName(pageWrapper);
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		Integer size  = ComputerDAOImpl.Singleton.getListSizeWithName(cn,pageWrapper);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		return size; 
 	}
 	
 	/**
@@ -61,7 +87,10 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public List getListComputerWithName(PageWrapper pageWrapper) {
-		return ComputerDAOImpl.Singleton.getListWithName(pageWrapper);
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		ArrayList<Computer> list  = (ArrayList<Computer>) ComputerDAOImpl.Singleton.getListWithName(cn,pageWrapper);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		return list; 
 	}
 
 	/**
@@ -69,9 +98,29 @@ public enum MainServiceImpl implements MainService{
 	 * @param comp A Computer to be put in the table computer to be displayed
 	 */
 	@Override
-	public void insertComputer(Computer comp) {		
-		ComputerDAOImpl.Singleton.insert(comp);
-	}
+	public void insertComputer(Computer comp) {
+		
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		
+		//Transaction
+		try {
+		cn.setAutoCommit(false);
+		}catch (SQLException e) {
+			throw new IllegalStateException("Error while setting auto-commit to false on insertion");
+		}
+		try {
+			ComputerDAOImpl.Singleton.insert(cn,comp);
+			try {
+				cn.rollback();
+			} catch (SQLException e2) {
+				abortTransaction(cn," on insertion");
+			}
+		} catch (SQLException e3) {
+			throw new IllegalStateException("Error on insertion");
+		} finally {
+			abortTransaction(cn," on insertion");
+		}
+	}	
 	
 	/**
 	 * 
@@ -80,7 +129,27 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public void editComputer(Computer comp, Long id) {
-		ComputerDAOImpl.Singleton.edit(comp,id);
+		
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		
+		//Transaction
+		try {
+		cn.setAutoCommit(false);
+		}catch (SQLException e) {
+			throw new IllegalStateException("Error while setting auto-commit to false on edition");
+		}
+		try {
+			ComputerDAOImpl.Singleton.edit(cn,comp,id);
+			try {
+				cn.rollback();
+			} catch (SQLException e2) {
+				abortTransaction(cn," on edition");
+			}
+		} catch (SQLException e3) {
+			throw new IllegalStateException("Error while setting auto-commit to false on edition");
+		} finally {
+			abortTransaction(cn," on edition");
+		}	
 	}
 	
 	/**
@@ -89,7 +158,27 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public void removeComputer(Long id) {
-		ComputerDAOImpl.Singleton.remove(id);
+		
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		
+		//Transaction
+		try {
+		cn.setAutoCommit(false);
+		}catch (SQLException e) {
+			throw new IllegalStateException("Error while setting auto-commit to false on removal");
+		}
+		try {
+			ComputerDAOImpl.Singleton.remove(cn,id);
+			try {
+				cn.rollback();
+			} catch (SQLException e2) {
+				abortTransaction(cn," on removal");
+			}
+		} catch (SQLException e3) {
+			throw new IllegalStateException("Error on removal");
+		} finally {
+			abortTransaction(cn," on removal");
+		}	
 	}
 	
 	/**
@@ -97,7 +186,10 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public Company findCompanyById(Long id) {
-		return CompanyDAOImpl.Singleton.findById(id);
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		Company comp  = CompanyDAOImpl.Singleton.findById(cn,id);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		return comp; 
 	}
 	
 	/**
@@ -105,7 +197,10 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public Company findCompanyByName(String name) {
-		return CompanyDAOImpl.Singleton.findByName(name);
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		Company comp  = CompanyDAOImpl.Singleton.findByName(cn,name);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		return comp;
 	}	
 	
 	/**
@@ -114,7 +209,10 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public List getListCompany() {
-		return CompanyDAOImpl.Singleton.getList();
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		ArrayList<Company> list  = (ArrayList<Company>) CompanyDAOImpl.Singleton.getList(cn);
+		ConnectionFactoryImpl.Singleton.closeConnection(cn);
+		return list; 
 	}
 	
 	/**
@@ -123,6 +221,26 @@ public enum MainServiceImpl implements MainService{
 	 */
 	@Override
 	public void insertCompany(Company comp) {
-		CompanyDAOImpl.Singleton.insert(comp);
+		
+		Connection cn = ConnectionFactoryImpl.Singleton.getConnection();
+		
+		//Transaction
+		try {
+		cn.setAutoCommit(false);
+		}catch (SQLException e) {
+			throw new IllegalStateException("Error while setting auto-commit to false on company insertion");
+		}
+		try {
+			CompanyDAOImpl.Singleton.insert(cn,comp);
+			try {
+				cn.rollback();
+			} catch (SQLException e2) {
+				abortTransaction(cn," on company insertion");
+			}
+		} catch (SQLException e3) {
+			throw new IllegalStateException("Error on company insertion");
+		} finally {
+			abortTransaction(cn," on company insertion");
+		}	
 	}
 }

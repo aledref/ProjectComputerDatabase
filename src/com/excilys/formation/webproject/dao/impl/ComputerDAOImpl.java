@@ -58,11 +58,10 @@ public enum ComputerDAOImpl implements ComputerDAO{
 	/**
 	 * @return The Computer in the table computer matching the id
 	 */
-	public Computer find(Long id) {
+	public Computer find(Connection cn,Long id) {
 		ArrayList<Computer> liste  = new ArrayList<>();
 		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;	
 		Computer computer = null;
 
 		try {
@@ -81,7 +80,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return computer;
 	}
@@ -89,12 +88,11 @@ public enum ComputerDAOImpl implements ComputerDAO{
 	 * 
 	 * @return
 	 */
-	public Integer getListSize() {
+	public Integer getListSize(Connection cn) {
 
 		Integer computerListSize = null;
 		ResultSet rs = null ;
-		Statement stmt = null;
-		Connection cn = null;		
+		Statement stmt = null;	
 
 		try {
 
@@ -108,7 +106,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return computerListSize;
 	}
@@ -116,12 +114,11 @@ public enum ComputerDAOImpl implements ComputerDAO{
 	 * 
 	 * @return A List<Computer> of Computer in the table computer
 	 */
-	public List getList() {
+	public List getList(Connection cn) {
 
 		ArrayList<Computer> liste  = new ArrayList<>();
 		ResultSet rs = null ;
 		Statement stmt = null;
-		Connection cn = null;
 
 		try {
 
@@ -135,7 +132,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return liste;
 	}
@@ -143,12 +140,11 @@ public enum ComputerDAOImpl implements ComputerDAO{
 	 * 
 	 * @param pagewrapper
 	 */
-	public void getList(PageWrapper pageWrapper) {
+	public void getList(Connection cn,PageWrapper pageWrapper) {
 
 		ArrayList<Computer> liste  = new ArrayList<>(25);
 		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
 
 		try {
 
@@ -167,7 +163,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 	}
 	/**
@@ -175,12 +171,11 @@ public enum ComputerDAOImpl implements ComputerDAO{
 	 * @param pageWrapper
 	 * @return
 	 */
-	public Integer getListSizeWithName(PageWrapper pageWrapper) {	
+	public Integer getListSizeWithName(Connection cn,PageWrapper pageWrapper) {	
 
 		Integer computerListSize = null;
 		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
 
 		try {
 			cn = ConnectionFactoryImpl.Singleton.getConnection();
@@ -197,7 +192,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return computerListSize;	
 	}
@@ -205,12 +200,11 @@ public enum ComputerDAOImpl implements ComputerDAO{
 	 * 
 	 * @return A List<Computer> of Computer in the table computer containing namefilter
 	 */
-	public List getListWithName(PageWrapper pageWrapper) {	
+	public List getListWithName(Connection cn,PageWrapper pageWrapper) {	
 
 		ArrayList<Computer> liste  = new ArrayList<>();
 		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
 
 		try {
 			cn = ConnectionFactoryImpl.Singleton.getConnection();
@@ -230,127 +224,79 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		} catch (SQLException e) {
 			throw new IllegalStateException("SQL Exception on ResultSet");
 		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
+			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs);
 		}
 		return liste;	
 	}
 	/**
 	 * 
-	 * @param comp A Computer to be added in the table computer
+	 * @param cn
+	 * @param comp
+	 * @throws SQLException
 	 */
-	public void insert(Computer comp) {
+	public void insert(Connection cn,Computer comp) throws SQLException{
 
-		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
 
-		try {
-
-			cn = ConnectionFactoryImpl.Singleton.getConnection();
-			String companyname = comp.getCompany().getName();
-			if (comp.getCompany().getName()==null) stmt = cn.prepareStatement("INSERT into computer(name,introduced,discontinued) VALUES (?,?,?);");
-			else stmt = cn.prepareStatement("INSERT into computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);"); 
+		cn = ConnectionFactoryImpl.Singleton.getConnection();
+		String companyname = comp.getCompany().getName();
+		if (comp.getCompany().getName()==null) stmt = cn.prepareStatement("INSERT into computer(name,introduced,discontinued) VALUES (?,?,?);");
+		else stmt = cn.prepareStatement("INSERT into computer(name,introduced,discontinued,company_id) VALUES (?,?,?,?);"); 
 			
-			stmt.setString(1,comp.getName());
-			stmt.setString(2,String.valueOf(comp.getIntroduced()));
-			if (companyname != null) {
-			stmt.setString(3,String.valueOf(comp.getDiscontinued()));
-			stmt.setString(4,String.valueOf(comp.getCompany().getId()));
-			} else stmt.setString(3,String.valueOf(comp.getDiscontinued()));
+		stmt.setString(1,comp.getName());
+		stmt.setString(2,String.valueOf(comp.getIntroduced()));
+		if (companyname != null) {
+		stmt.setString(3,String.valueOf(comp.getDiscontinued()));
+		stmt.setString(4,String.valueOf(comp.getCompany().getId()));
+		} else stmt.setString(3,String.valueOf(comp.getDiscontinued()));
 			
-			stmt.executeUpdate();
+		stmt.executeUpdate();
 
-		} catch (SQLException e) {
-			throw new IllegalStateException("Error on computer insertion query");
-		} finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
-		}		
+		ConnectionFactoryImpl.Singleton.closeStatement(stmt);	
 	}
 	/**
 	 * 
-	 * @param comp A Computer to be edited in the table computer
-	 * @param id The id of the edited Computer
+	 * @param cn
+	 * @param comp
+	 * @param id
+	 * @throws SQLException
 	 */
-	public void edit(Computer comp,Long id){
+	public void edit(Connection cn,Computer comp,Long id) throws SQLException{
 
-		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
-
-		try {
-
-			cn = ConnectionFactoryImpl.Singleton.getConnection();
-			Long companyid = comp.getCompany().getId();
-			if (comp.getCompany().getId()==null) stmt = cn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=? WHERE id = ?");
-			else stmt = cn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id = ?");
 			
-			stmt.setString(1,comp.getName());
-			stmt.setString(2,String.valueOf(comp.getIntroduced()));
-			stmt.setString(3,String.valueOf(comp.getDiscontinued()));
-			if (companyid != null) {
-				stmt.setString(4,String.valueOf(companyid));
-				stmt.setString(5,String.valueOf(id));
-			}else stmt.setString(4,String.valueOf(id));
+		Long companyid = comp.getCompany().getId();
+		if (comp.getCompany().getId()==null) stmt = cn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=? WHERE id = ?");
+		else stmt = cn.prepareStatement("UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id = ?");
 			
-			//Transaction
-			cn.setAutoCommit(false);
-			try {
-			stmt.executeUpdate();
-			} catch (SQLException e) {
-				cn.rollback();
-			}				
-			cn.commit();
-
-		} catch (SQLException e) {
-			throw new IllegalStateException("Error on computer edition query");
-		} finally {
-			try {
-				cn.setAutoCommit(true);
-			} catch (SQLException e) {
-				throw new IllegalStateException("Error while setting back auto-commit to true on edition");
-			}
-			finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
-			}
-		}	
+		stmt.setString(1,comp.getName());
+		stmt.setString(2,String.valueOf(comp.getIntroduced()));
+		stmt.setString(3,String.valueOf(comp.getDiscontinued()));
+		if (companyid != null) {
+			stmt.setString(4,String.valueOf(companyid));
+			stmt.setString(5,String.valueOf(id));
+		}else stmt.setString(4,String.valueOf(id));
+						
+		stmt.executeUpdate();
+		ConnectionFactoryImpl.Singleton.closeStatement(stmt);
 	}
 	/**
 	 * 
-	 * @param id The id of the Computer to be removed in the table computer
+	 * @param cn
+	 * @param id
+	 * @throws SQLException
 	 */
-	public void remove(Long id) {
+	public void remove(Connection cn,Long id) throws SQLException{
 
-		ResultSet rs = null ;
 		PreparedStatement stmt = null;
-		Connection cn = null;
 
-		try {
+		cn = ConnectionFactoryImpl.Singleton.getConnection();
+		stmt = cn.prepareStatement("DELETE FROM computer WHERE id = ?;");
 
-			cn = ConnectionFactoryImpl.Singleton.getConnection();
-			stmt = cn.prepareStatement("DELETE FROM computer WHERE id = ?;");
-
-			stmt.setString(1,String.valueOf(id));
+		stmt.setString(1,String.valueOf(id));
 			
-			//Transaction
-			cn.setAutoCommit(false);
-			try {
-			stmt.executeUpdate();
-			} catch (SQLException e) {
-				cn.rollback();
-			}				
-			cn.commit();
+		stmt.executeUpdate();
 
-		} catch (SQLException e) {
-			throw new IllegalStateException("Error on computer removal query");
-		} finally {
-			try {
-				cn.setAutoCommit(true);
-			} catch (SQLException e) {
-				throw new IllegalStateException("Error while setting back auto-commit to true on removal");
-			}
-			finally {
-			ConnectionFactoryImpl.Singleton.disconnect(stmt,rs,cn);
-			}
-		}
+		ConnectionFactoryImpl.Singleton.closeStatement(stmt);
 	}
 }

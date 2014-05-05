@@ -1,5 +1,6 @@
 package com.excilys.formation.webproject.dao;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,12 +17,12 @@ public interface CompanyDAO{
 	/**
 	 * @return The Company in the table company matching the id
 	 */
-	public Company findById(Long id);
+	public Company findById(Connection cn,Long id);
 	
 	/**
 	 * @return The Company in the table company matching the name
 	 */
-	public Company findByName(String name);
+	public Company findByName(Connection cn,String name);
 	
 	/**
 	 * 
@@ -34,11 +35,11 @@ public interface CompanyDAO{
 	 * 
 	 * @return A List<Company> of Company in the table company
 	 */
-	public List getList();
+	public List getList(Connection cn);
 
 	/**
 	 * 
 	 * @param comp A Company to be added in the table company
 	 */
-	public void insert(Company comp);
+	public void insert(Connection cn,Company comp)throws SQLException;
 }

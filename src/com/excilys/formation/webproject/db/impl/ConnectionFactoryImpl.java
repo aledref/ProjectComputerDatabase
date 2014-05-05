@@ -102,10 +102,9 @@ public void closeConnection(Connection conn) {
 	} 
 }
 
-public void disconnect(Statement stmt,ResultSet rs,Connection conn) {
+public void disconnect(Statement stmt,ResultSet rs) {
 	closeStatement(stmt);
 	closeResultSet(rs);
-	closeConnection(conn);
 }
  
 public BoneCP getConnectionPool() {
