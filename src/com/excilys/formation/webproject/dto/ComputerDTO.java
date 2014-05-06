@@ -69,7 +69,7 @@ public class ComputerDTO implements Serializable {
 		public String getName() {
 			return name;
 		}
-		
+
 		/**
 		 * 
 		 * @return
@@ -120,7 +120,7 @@ public class ComputerDTO implements Serializable {
 		this.name = name;
 	}
 	/**
-	 * 
+	 * time
 	 * @return the String introduced
 	 */
 	public String getIntroduced() {

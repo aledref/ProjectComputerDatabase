@@ -12,7 +12,12 @@ public enum ConnectionFactoryImpl {
 	
 	Singleton;
  
+public final static String JDBC_URL = "jdbc:mysql://localhost:3306/computer-database-db";
+public final static String JDBC_USERNAME = "root";
+public final static String JDBC_PASSWORD = "root";
+	
 private BoneCP connectionPool = null;
+private static final ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
  
 private void configureConnPool() {
  
@@ -22,9 +27,9 @@ private void configureConnPool() {
 		throw new IllegalArgumentException("Could not find the driver for jdbc");
 	}
 	BoneCPConfig config = new BoneCPConfig();
-	config.setJdbcUrl("jdbc:mysql://localhost:3306/computer-database-db");
-	config.setUsername("root");
-	config.setPassword("root");
+	config.setJdbcUrl(JDBC_URL);
+	config.setUsername(JDBC_USERNAME);
+	config.setPassword(JDBC_PASSWORD);
 	config.setMinConnectionsPerPartition(5);   
 	config.setMaxConnectionsPerPartition(10);
 	config.setPartitionCount(2); //2*5 = 10 connection will be available
@@ -40,8 +45,6 @@ private void configureConnPool() {
 }
  
 public void shutdownConnPool() {
- 
-	try {
 		BoneCP connectionPool = getConnectionPool();
 		System.out.println("contextDestroyed....");
 		if (connectionPool != null) {
@@ -49,10 +52,6 @@ public void shutdownConnPool() {
 			//you don't need to call it every time when you get a connection from the Connection Pool
 			System.out.println("contextDestroyed.....Connection Pooling shut down!");
 		}
- 
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
 }
  
 public Connection getConnection() {
@@ -62,44 +61,43 @@ Connection conn = null;
 	//first connection ?
 	if (connectionPool ==null) configureConnPool();
 
-
-	try {
-	conn = getConnectionPool().getConnection();
- 	//will get a thread-safe connection from the BoneCP connection pool.
- 	//synchronization of the method will be done inside BoneCP source
- 
-	} catch (Exception e) {
-		e.printStackTrace();
+	if(threadConnection.get()==null){	
+		try {
+		conn = getConnectionPool().getConnection();
+		} catch (SQLException e) {
+			throw new RuntimeException("Could not get a connection");
+		}
+		threadConnection.set(conn);
 	}
-	return conn;
+	return threadConnection.get();
 }
  
 public void closeStatement(Statement stmt) {
 	try {
-		if (stmt != null)
-			stmt.close();
+		if (stmt != null) stmt.close();
 	} catch (Exception e) {
-		e.printStackTrace();
+		throw new IllegalStateException("Could not close statement");
 	}
 }
  
 public void closeResultSet(ResultSet rs) {
 	try {
-		if (rs != null)
-			rs.close();
+		if (rs != null) rs.close();
 	} catch (Exception e) {
-		e.printStackTrace();
+		throw new IllegalStateException("Could not close result set");
 	} 
 }
  
 public void closeConnection(Connection conn) {
-	try {
-		if (conn != null)
-			conn.close(); //release the connection - the name is tricky but connection is not closed it is released
-		//and it will stay in pool
-	} catch (SQLException e) {
-		e.printStackTrace();
-	} 
+	if(threadConnection.get()!=null){
+		try {
+			threadConnection.get().close();
+		} catch (SQLException e) {
+			throw new IllegalStateException("Could not close connection");
+		} finally{
+			threadConnection.remove();
+		}
+	}
 }
 
 public void disconnect(Statement stmt,ResultSet rs) {
