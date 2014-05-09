@@ -140,12 +140,12 @@ public enum MainServiceImpl implements MainService{
 		}
 		try {
 			ComputerDAOImpl.Singleton.edit(cn,comp,id);
+		} catch (SQLException e2) {
 			try {
 				cn.rollback();
-			} catch (SQLException e2) {
+			} catch (SQLException e3) {
 				abortTransaction(cn," on edition");
 			}
-		} catch (SQLException e3) {
 			throw new IllegalStateException("Error while setting auto-commit to false on edition");
 		} finally {
 			abortTransaction(cn," on edition");
@@ -169,12 +169,12 @@ public enum MainServiceImpl implements MainService{
 		}
 		try {
 			ComputerDAOImpl.Singleton.remove(cn,id);
+		} catch (SQLException e2) {
 			try {
 				cn.rollback();
-			} catch (SQLException e2) {
+			} catch (SQLException e3) {
 				abortTransaction(cn," on removal");
 			}
-		} catch (SQLException e3) {
 			throw new IllegalStateException("Error on removal");
 		} finally {
 			abortTransaction(cn," on removal");

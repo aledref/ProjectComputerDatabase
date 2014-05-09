@@ -249,7 +249,7 @@ public enum ComputerDAOImpl implements ComputerDAO{
 		stmt.setString(3,String.valueOf(comp.getDiscontinued()));
 		stmt.setString(4,String.valueOf(comp.getCompany().getId()));
 		} else stmt.setString(3,String.valueOf(comp.getDiscontinued()));
-			
+		
 		stmt.executeUpdate();
 
 		ConnectionFactoryImpl.Singleton.closeStatement(stmt);	
